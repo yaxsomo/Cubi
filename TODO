@@ -1,0 +1,33 @@
+Soft :
+C- Handle BT configuration (baud rate, pin)
+C- No beep when only USB
+C- Song bug (plays 1 more?)
+C- Ik and DK
+C- Talk in mm/s
+C- Make it usable with the python API
+- Feed forward :)
+- Make calibrtion utilities (startForwardCalib -> we move the robot in a straight line -> stopForwardCalib [distance])
+=> The result (R) mush be stored in flash memory
+=> Same for L, but the rotation is done by the robot (speed controled), and the user just counts the number of rotations
+- Take the flash writing code from Dynaban, use it to save the flash dates, number of times turned only
+(we can't write in the flash during normal use because it's very slow, 100ms slow, so we'll do it only during the startup phase)
+- gotoxy, gotoa.
+- Map (A, B)to dx dy directly, there isn't so many of them to store.
+
+Elec :
+C- Faire board
+- Jouer avec board MP3 + carte SD
+~- Pull-down sur key HC-05 -> Je laisse la connexion pour l'instant, il y a peut-être un lien avec la difficulté à configurer la puce?
+- Acheter HC-05 sans breakboard (alim en 3.3, pas besoin de régulo 5V du coup :)
+
+Meca
+- Chanfrein sur tous les angles
+- Capot
+- Roue en bois (only découpe) et joint torique
+- Bloc moteur en full découpe ?
+
+Demo
+- Allez retour en esquivant des objets qui sont jettés dynamiquement sur son chemin
+
+Futur :
+- TTS

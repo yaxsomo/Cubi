@@ -1,0 +1,8 @@
+Relai bi-stable, passant sur une impulsion donné par un bouton poussoir (qui est à ON tant qu'on mantient le doigt dessus), et coupé quand la tension est trop faible.
+-> Pourquoi ce n'est pas le standard de partout ?
+
+http://www.ti.com/lit/ds/symlink/bq2970.pdf
+
+https://www.digikey.com/en/maker/blogs/lithium-ion-cell-protection/aee8cf348b194141a17e7f698eff7e1e
+
+https://www.youtube.com/watch?v=1Fs4SfVSsLk

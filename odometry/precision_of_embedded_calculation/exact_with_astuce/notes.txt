@@ -1,0 +1,12 @@
+Exact equations but with making sure there are no guge discreptencies between floatting point values.
+
+Example :
+
+float r = l/alpha;
+float result = r*sin(alpha);
+
+is turned into :
+
+float result = (sin(alpha)/alpha)*l
+
+Because alpha can be very small.

@@ -1,0 +1,1 @@
+Note : all (most?) parameters are stored in the base.iam file that must be linked in all derivatives.

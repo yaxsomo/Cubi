@@ -1,0 +1,1 @@
+All embedded calculations are done in floating point precision, the exact formulas are used.

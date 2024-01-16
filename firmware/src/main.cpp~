@@ -1,0 +1,180 @@
+#include <stdlib.h>
+#include <wirish/wirish.h>
+#include <terminal.h>
+#include <libmaple/adc.h>
+#include <libmaple/timer.h>
+//#include <main.h>
+
+#define PWM1 27
+#define PWM2 28
+#define PWM12_ENABLE 29
+
+/**
+ * Schedules the hardware tasks
+ */
+void hardware_tick();
+
+void set_ready_to_update_hardware();
+
+int my_atoi(char *p, bool * success);
+
+
+long           counter               = 0;
+unsigned int   hardwareCounter       = 0;
+bool           readyToUpdateHardware = false;
+bool           led_state             = false;
+HardwareTimer timer2(2);
+uint32 time_ms = 0;
+
+TERMINAL_COMMAND(hello, "Print a friendly warming welcoming message")
+  {
+      if (argc > 0) {
+          terminal_io()->print("Hello ");
+          terminal_io()->println(argv[0]);
+          terminal_io()->print("Other params: ");
+          for (unsigned i=1;i<argc;i++) {
+              terminal_io()->print(argv[i]);
+              terminal_io()->print(" ");
+          }
+          terminal_io()->println();
+      } else {
+          terminal_io()->println("Hello world");
+      }
+  }
+
+
+// Force init to be called *first*, i.e. before static object allocation.
+// Otherwise, statically allocated objects that need libmaple may fail.
+__attribute__((constructor)) void premain()
+{
+    init();
+}
+
+int main(void)
+{
+    setup();
+
+    while (true) {
+        loop();
+    }
+
+    return 0;
+}
+
+void setup() {
+    // Wirish board specific init
+    disableDebugPorts();
+
+    pinMode(BOARD_LED_PIN, OUTPUT);
+
+    /*
+
+    pinMode(PWM12_ENABLE, OUTPUT);
+    pinMode(PWM1, PWM);
+    pinMode(PWM2, PWM);
+    */
+    /*
+    timer2.pause();
+    // The hardware will be read at 1Khz
+    timer2.setPrescaleFactor(72);
+    timer2.setOverflow(1000);
+    timer2.setChannel1Mode(TIMER_OUTPUT_COMPARE);
+    // Interrupt 1 count after each update
+    timer2.setCompare(TIMER_CH1, 1);
+    timer2.attachCompare1Interrupt(set_ready_to_update_hardware);
+    timer2.refresh();
+    timer2.resume();
+    */
+    // Terminal management
+    pinMode(BOARD_USART1_TX_PIN, OUTPUT);
+    pinMode(BOARD_USART1_RX_PIN, INPUT);
+    Serial1.begin(921600);
+    terminal_init(&Serial1);
+    //RC.begin(921600);
+    //terminal_init(&RC);
+
+    /*while(true) {
+      delay(500);
+      digitalWrite(BOARD_LED_PIN, LOW);
+      delay(500);
+      digitalWrite(BOARD_LED_PIN, HIGH);
+      }*/
+    digitalWrite(BOARD_LED_PIN, HIGH);
+
+}
+
+
+void loop() {
+  counter++;
+  delay(1);
+  /*
+  Serial1.print("Tx pin = ");
+  Serial1.println(Serial1.txPin());
+  Serial1.print("Rx pin = ");
+  Serial1.println(Serial1.rxPin());
+  Serial1.waitDataToBeSent();
+  */
+  if (counter < 500) {
+    digitalWrite(BOARD_LED_PIN, LOW);
+  } else if (counter >= 500 && counter < 1000) {
+    digitalWrite(BOARD_LED_PIN, HIGH);
+  } else {
+    counter = 0;
+  }
+
+  terminal_tick();
+  return;
+    if (readyToUpdateHardware) {
+        counter++;
+        readyToUpdateHardware = false;
+        hardware_tick();
+    }
+}
+
+void hardware_tick() {
+    //These actions are performed at a rate of 1kHz
+    hardwareCounter++;
+    time_ms = time_ms + 1;
+    //read_hardware();
+    //motor_set_target_angle(3472 + 100*sin(2*3.1415*1*time_ms/1000));
+
+    if (hardwareCounter & (1 << 9)) {
+        
+        //These actions are performed at ~2 Hz
+        led_state = ~led_state;
+        if (led_state) {
+            digitalWrite(BOARD_LED_PIN, LOW);
+        } else {
+            digitalWrite(BOARD_LED_PIN, HIGH);
+        }
+
+        hardwareCounter = 0;
+    }
+}
+
+void set_ready_to_update_hardware() {
+    readyToUpdateHardware = true;
+}
+
+
+int my_atoi(char *p, bool * success) {
+    int k = 0;
+    int sign = 1;
+    if (*p == '-') {
+        sign = -1;
+        p++;
+    }
+    while (*p != '\0') {
+        int value = *p - '0';
+        if (value >=0 && value <= 9) {
+            k = k*10 + value;
+            p++;
+        } else {
+            *success = false;
+            return 0;
+        }
+    }
+    *success = true;
+    return k*sign;
+}
+ 
